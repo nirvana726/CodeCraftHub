@@ -12,4 +12,8 @@ connectDB();
 
 app.use('/api/users', userRoutes);
 
+app.get('/', (req, res) => {
+    res.send('User Management Service is running.');
+  });
+  
 module.exports = app;

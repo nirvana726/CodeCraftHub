@@ -43,6 +43,31 @@ const loginUser = async (req, res) => {
     }
 };
 
-// Add more user-related functions (e.g., get user, update user, etc.)
-
-module.exports = { registerUser, loginUser };
+// Update user profile
+const updateUserProfile = async (req, res) => {
+    const userId = req.params.id;  // Using user ID from URL param
+    const { newUsername, newEmail, newPassword } = req.body;
+  
+    try {
+      const updateData = {};
+      if (newUsername) updateData.username = newUsername;
+      if (newEmail) updateData.email = newEmail;
+  
+      if (newPassword) {
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        updateData.password = hashedPassword;
+      }
+  
+      const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+  
+      if (!updatedUser) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      res.json({ message: 'User profile updated successfully', user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+  module.exports = { registerUser, loginUser, updateUserProfile };
